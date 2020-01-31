@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% set title = "Polls List" %}
+
+{% block content %}
+{% if polls %}
+    <ul>
+    {% for p in polls %}
+    <li><a href="{{ url('poll', poll_id=p.id) }}">{{ p.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+{% endblock %}
