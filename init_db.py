@@ -78,17 +78,53 @@ def sample_data(engine=test_engine):
         {'question_text': 'Poll 2 question 1', 'poll_id': 2},
     ])
     conn.execute(choice.insert(), [
-        {'choice_text': 'Choice 1 question 1 poll 1', 'question_id': 1},
-        {'choice_text': 'Choice 2 question 1 poll 1', 'question_id': 1},
-        {'choice_text': 'Choice 3 question 1 poll 1', 'question_id': 1},
-        {'choice_text': 'Choice 4 question 1 poll 1', 'question_id': 1},
+        # question 1
+        {
+            'choice_text': 'Choice 1 question 1 poll 1',
+            'question_id': 1,
+            'correct': False
+        },
+        {
+            'choice_text': 'Choice 2 question 1 poll 1',
+            'question_id': 1,
+            'correct': False
+        },
+        {
+            'choice_text': 'Choice 3 question 1 poll 1',
+            'question_id': 1,
+            'correct': False
+        },
+        {
+            'choice_text': 'Choice 4 question 1 poll 1',
+            'question_id': 1,
+            'correct': True
+        },
 
-        {'choice_text': 'Choice 1 question 1 poll 1', 'question_id': 2},
-        {'choice_text': 'Choice 2 question 2 poll 1', 'question_id': 2},
+        # question 2
+        {
+            'choice_text': 'Choice 1 question 1 poll 1',
+            'question_id': 2,
+            'correct': False
+        },
+        {
+            'choice_text': 'Choice 2 question 2 poll 1',
+            'question_id': 2,
+            'correct': True
+        },
 
-        {'choice_text': 'Choice 1 question 1 poll 2', 'question_id': 3},
-        {'choice_text': 'Choice 2 question 1 poll 2', 'question_id': 3},
+        # question 3
+        {
+            'choice_text': 'Choice 1 question 1 poll 2',
+            'question_id': 3,
+            'correct': True
+        },
+        {
+            'choice_text': 'Choice 2 question 1 poll 2',
+            'question_id': 3,
+            'correct': False
+        },
     ])
+
     conn.close()
 
 

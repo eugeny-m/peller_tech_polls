@@ -1,7 +1,7 @@
 import aiopg.sa
 from sqlalchemy import (
     MetaData, Table, Column, ForeignKey,
-    Integer, String, Date
+    Integer, String, Boolean
 )
 
 
@@ -44,7 +44,7 @@ choice = Table(
 
     Column('id', Integer, primary_key=True),
     Column('choice_text', String(200), nullable=False),
-    Column('votes', Integer, server_default="0", nullable=False),
+    Column('correct', Boolean, server_default='f'),
     Column(
         'question_id',
         Integer,
