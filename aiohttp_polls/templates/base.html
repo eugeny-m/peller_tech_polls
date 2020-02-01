@@ -8,10 +8,11 @@
     {% endblock %}
   </head>
   <body>
-    <h1>{{title}}</h1>
-    <div>
+    <h1>{{ title }}</h1>
+    <div id="content_block">
       {% block content %}
       {% endblock %}
     </div>
+    <a href="{{ url('index') }}">Go to main page</a>
   </body>
 </html>
