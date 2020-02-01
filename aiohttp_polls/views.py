@@ -26,35 +26,30 @@ async def poll(request):
         return results
 
 
-# @aiohttp_jinja2.template('results.html')
-# async def results(request):
-#     async with request.app['db'].acquire() as conn:
-#         question_id = request.match_info['question_id']
-#
-#         try:
-#             question, choices = await db.get_question(conn, question_id)
-#         except db.RecordNotFound as e:
-#             raise web.HTTPNotFound(text=str(e))
-#
-#         return {
-#             'question': question,
-#             'choices': choices
-#         }
-
-
+@aiohttp_jinja2.template('results.html')
 async def vote(request):
     async with request.app['db'].acquire() as conn:
-        question_id = int(request.match_info['question_id'])
-        data = await request.post()
-        try:
-            choice_id = int(data['choice'])
-        except (KeyError, TypeError, ValueError) as e:
-            raise web.HTTPBadRequest(
-                text='You have not specified choice value') from e
-        try:
-            await db.vote(conn, question_id, choice_id)
-        except db.RecordNotFound as e:
-            raise web.HTTPNotFound(text=str(e))
-        router = request.app.router
-        url = router['results'].url_for(question_id=str(question_id))
-        return web.HTTPFound(location=url)
+        poll_id = int(request.match_info['poll_id'])
+        answers = await request.post()  # {'question_id': 'choice_id'}
+
+        # getting data for current poll
+        poll_data = await db.get_poll_questions(
+            conn,
+            poll_id
+        )
+
+        for q in poll_data['questions']:
+
+            # answer for current question
+            answer = answers[str(q['question'].id)]
+
+            # transform choices objects to dicts
+            q['choices'] = [dict(ch) for ch in q['choices']]
+
+            # add "right" or "wrong" parameter to choice dict
+            for ch in q['choices']:
+                if str(ch['id']) == answer and ch['correct']:
+                    ch['right'] = True
+                elif str(ch['id']) == answer and not ch['correct']:
+                    ch['wrong'] = True
+        return poll_data
