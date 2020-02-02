@@ -31,7 +31,9 @@ These instructions will get you a copy of the project up and running on your loc
 `python init_db.py --config '/path/to/config/file.yaml'`
 * run app  
 `python main.py --config '/path/to/config/file.yaml'`
-
+* check in your webbrowser  
+`http://127.0.0.1:8080`  
+`http://127.0.0.1:8080/admin`
 
 ## Built With
 
