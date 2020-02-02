@@ -122,7 +122,6 @@ async def get_list(conn, model):
 
 
 async def get_object(conn, model, obj_id):
-    # get poll object
     result = await conn.execute(
         model.select()
         .where(model.c.id == obj_id))
@@ -135,14 +134,31 @@ async def get_object(conn, model, obj_id):
 
 
 async def create_object(conn, model, data):
-    result = await conn.execute(model.insert().values(**data))
-    return await result.fetchall()
+    resp = {
+        'result': None,
+        'errors': None
+    }
+    try:
+        result = await conn.execute(model.insert().values(**data))
+        resp['result'] = await result.fetchall()
+    except Exception as e:
+        resp['errors'] = e
+    return resp
 
 
 async def update_object(conn, model, obj_id, data):
-    result = await conn.execute(
-        model.update()
-        .returning(*model.c)
-        .where(model.c.id == obj_id)
-        .values(**data))
-    return await result.fetchall()
+    resp = {
+        'result': None,
+        'errors': None
+    }
+    try:
+        result = await conn.execute(
+            model.update()
+            .returning(*model.c)
+            .where(model.c.id == obj_id)
+            .values(**data))
+        resp['result'] = await result.fetchall()
+    except Exception as e:
+        resp['errors'] = e
+
+    return resp
