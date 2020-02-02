@@ -132,3 +132,17 @@ async def get_object(conn, model, obj_id):
         msg = "{} with id: {} does not exists"
         raise RecordNotFound(msg.format(model, obj_id))
     return record
+
+
+async def create_object(conn, model, data):
+    result = await conn.execute(model.insert().values(**data))
+    return await result.fetchall()
+
+
+async def update_object(conn, model, obj_id, data):
+    result = await conn.execute(
+        model.update()
+        .returning(*model.c)
+        .where(model.c.id == obj_id)
+        .values(**data))
+    return await result.fetchall()
