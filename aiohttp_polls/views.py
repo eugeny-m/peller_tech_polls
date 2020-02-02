@@ -60,10 +60,27 @@ async def vote(request):
 @aiohttp_jinja2.template('registration.html')
 async def registration_page(request):
     async with request.app['db'].acquire() as conn:
-        return {}
+        return {'registration': True}
 
 
 @aiohttp_jinja2.template('registration.html')
 async def registration(request):
     async with request.app['db'].acquire() as conn:
-        return {}
+        answers = await request.post()
+        answers = dict(answers)
+        if answers['gender'] not in ['m', 'f']:
+            answers.pop('gender')
+        result = await db.create_object(conn, db.user, answers)
+
+        context = {'registration': True}
+
+        if result['errors']:
+            context['error_message'] = result['errors']
+            return aiohttp_jinja2.render_template(
+                request=request,
+                context=context,
+                template_name='registration.html',
+            )
+
+        context['success'] = True
+        return context

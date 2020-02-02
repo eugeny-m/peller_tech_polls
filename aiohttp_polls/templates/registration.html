@@ -4,8 +4,42 @@
 
 {% block content %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if error_message %}
+<div class="alert alert-danger" role="alert">
+  {{ error_message }}
+</div>
+{% endif %}
 
+{% if not success %}
+<p>Please, fill registration form.</p>
+<form action="{{ url('registration') }}" method="post">
+    <!--nickname-->
+    <div class="form-group">
+      <label for="id_nickname">Your nickname</label>
+      <input type="text" class="form-control" id="id_nickname" name="nickname" required placeholder="Enter nickname">
+    </div>
 
+    <!--age-->
+    <div class="form-group">
+      <label for="id_age">Your age</label>
+      <input type="number" min="0" class="form-control" id="id_age" name="age" required placeholder="Enter nickname">
+    </div>
+
+    <!--gender-->
+    <div class="form-group">
+      <label for="id_gender">Select your gender</label>
+      <select class="form-control"  type="text" id="id_gender" name="gender">
+        <option ></option>
+        <option value="m" >Male</option>
+        <option value="f" >Feale</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+{% else %}
+<p>Congrats! You successfully registred on Peller Tech polls service!</p>
+{% endif %}
 
 {% endblock %}
