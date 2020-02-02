@@ -1,24 +1,28 @@
 {% extends "admin/admin_base.html" %}
 
-{% set title = title %}
+{% set title = title|capitalize %}
 
 {% block content %}
 <table class="table">
   <thead>
     <tr>
+      <th scope="col">Id</th>
       {% for column in columns %}
       <th scope="col">{{ column|capitalize }}</th>
       {% endfor %}
     </tr>
   </thead>
   <tbody>
-  {% for obj in records %}
+  {% for record in records %}
     <tr>
-    {% for value in obj %}
+      <td scope="row">{{ record.id }}</td>
+      {% for value in record['values'] %}
       <td scope="row">{{ value }}</td>
       {#<td><a href="{{ url('poll', poll_id=p.id) }}">{{ p.title }}</a></td>#}
-    {% endfor %}
-      <td><button class="button">edit</button></td>
+      {% endfor %}
+      {% if record.id %}
+      <td><a href="{{ url(detail_view_name, id=record.id) }}"><button class="button">edit</button></a></td>
+      {% endif %}
     </tr>
 
   {% endfor %}

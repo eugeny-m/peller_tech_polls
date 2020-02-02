@@ -14,6 +14,8 @@ class BaseListCreateView(web.View):
     detail_template_name = 'admin/admin_model_detail.html'
     model = None
     title = 'Enter title'  # Model name for template title
+    list_view_name = None
+    detail_view_name = None
 
     def get_column_names(self):
         columns = []
@@ -24,14 +26,11 @@ class BaseListCreateView(web.View):
             columns.append(column.name)
 
         columns = sorted(columns)
-        columns = ['id'] + columns
         return columns
 
     # list view
     async def get(self):
-
         columns = self.get_column_names()
-
         async with self.request.app['db'].acquire() as conn:
             records = await db.get_list(conn, self.model)
 
@@ -39,14 +38,16 @@ class BaseListCreateView(web.View):
             # with ordering as columns
             formatted_records = []
             for record in records:
-                formatted_records.append([
-                    getattr(record, c) for c in columns
-                ])
+                formatted_records.append({
+                    'values': [getattr(record, c) for c in columns],
+                    'id': getattr(record, 'id', None),
+                })
 
             context = {
                 'records': formatted_records,
                 'title': self.title,
                 'columns': columns,
+                'detail_view_name': self.detail_view_name,
             }
             return aiohttp_jinja2.render_template(
                 request=self.request,
@@ -68,13 +69,19 @@ class BaseListCreateView(web.View):
 class PollListCreateView(BaseListCreateView):
     model = db.poll
     title = 'Poll'
+    list_view_name = 'admin_poll_list'
+    detail_view_name = 'admin_poll'
 
 
 class QuestionListCreateView(BaseListCreateView):
     model = db.question
     title = 'Question'
+    list_view_name = 'admin_question_list'
+    detail_view_name = 'admin_question'
 
 
 class ChoiceListCreateView(BaseListCreateView):
     model = db.choice
     title = 'Choice'
+    list_view_name = 'admin_choice_list'
+    detail_view_name = 'admin_choice'
