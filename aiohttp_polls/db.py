@@ -119,3 +119,16 @@ async def get_list(conn, model):
     result = await conn.execute(model.select().order_by(model.c.id.asc()))
     records = await result.fetchall()
     return records
+
+
+async def get_object(conn, model, obj_id):
+    # get poll object
+    result = await conn.execute(
+        model.select()
+        .where(model.c.id == obj_id))
+    record = await result.first()
+
+    if not record:
+        msg = "{} with id: {} does not exists"
+        raise RecordNotFound(msg.format(model, obj_id))
+    return record
