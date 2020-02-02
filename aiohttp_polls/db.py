@@ -5,7 +5,7 @@ from sqlalchemy import (
 )
 
 
-__all__ = ['poll', 'question', 'choice']
+__all__ = ['poll', 'question', 'choice', 'user']
 
 meta = MetaData()
 
@@ -51,6 +51,18 @@ choice = Table(
         ForeignKey('question.id', ondelete='CASCADE'),
         nullable=False,
     ),
+)
+
+
+# User table description
+user = Table(
+    'user',
+    meta,
+
+    Column('id', Integer, primary_key=True),
+    Column('nickname', String(200), nullable=False, unique=True),
+    Column('gender', String(1), nullable=True),  # m/f/None
+    Column('age', Integer, nullable=True),
 )
 
 

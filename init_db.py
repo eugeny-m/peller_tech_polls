@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, MetaData
 
-from aiohttp_polls.db import poll, question, choice
+from aiohttp_polls.db import poll, question, choice, user
 from aiohttp_polls.settings import BASE_DIR, get_config
 
 
@@ -58,12 +58,12 @@ def teardown_db(config):
 
 def create_tables(engine=test_engine):
     meta = MetaData()
-    meta.create_all(bind=engine, tables=[poll, question, choice])
+    meta.create_all(bind=engine, tables=[poll, question, choice, user])
 
 
 def drop_tables(engine=test_engine):
     meta = MetaData()
-    meta.drop_all(bind=engine, tables=[poll, question, choice])
+    meta.drop_all(bind=engine, tables=[poll, question, choice, user])
 
 
 def sample_data(engine=test_engine):
