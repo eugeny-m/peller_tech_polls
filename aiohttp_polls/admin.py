@@ -28,8 +28,27 @@ class BaseListCreateView(web.View):
         columns = sorted(columns)
         return columns
 
-    # list view
+    # list/detail view
     async def get(self):
+        obj_id = self.request.match_info.get('id', None)
+        if obj_id is not None:
+            return await self.detail(int(obj_id))
+
+        else:
+            return await self.list()
+
+    # create/edit view
+    async def post(self):
+        async with self.request.app['db'].acquire() as conn:
+            context = await db.get_list(conn, self.model)
+            return aiohttp_jinja2.render_template(
+                request=self.request,
+                context=context,
+                template_name=self.detail_template_name
+            )
+
+    # list view
+    async def list(self):
         columns = self.get_column_names()
         async with self.request.app['db'].acquire() as conn:
             records = await db.get_list(conn, self.model)
@@ -55,10 +74,66 @@ class BaseListCreateView(web.View):
                 template_name=self.list_template_name,
             )
 
-    # create view
-    async def post(self):
+    # detail view
+    async def detail(self, obj_id):
+        """
+        this method generate html form with all object fields except ID field
+        :param obj_id:
+        :return:
+        """
+
         async with self.request.app['db'].acquire() as conn:
-            context = await db.get_list(conn, self.model)
+            obj = await db.get_object(conn, self.model, obj_id)
+            fields = []
+            foreign_keys = {f.parent.name: f for f in self.model.foreign_keys}
+            print(foreign_keys)
+
+            for column in self.model.columns:
+
+                # could be VARCHAR(200), cutting part in the brackets
+                field_type = str(column.type).split('(')[0]
+                # foreign key parents
+                parents = None
+
+                if column.name == 'id':
+                    continue
+
+                # for foreignkey fields
+                # we get parents to show in form select
+                if column.name in foreign_keys:
+                    field_type = 'SELECT'
+                    parents = []
+
+                    f_key = foreign_keys[column.name]
+                    parent_records = await db.get_list(
+                        conn,
+                        f_key.column.table
+                    )
+
+                    # generate parents list for select options
+                    for parent in parent_records:
+                        # to chose selected foreign key value
+                        selected = getattr(obj, column.name) == parent.id
+                        parents.append({
+                            'id': parent.id,
+                            'value': repr(dict(parent)),
+                            'selected': selected
+                        })
+
+                fields.append({
+                    'name': column.name,
+                    'value': getattr(obj, column.name),
+                    'type': field_type,
+                    'parents': parents,
+                })
+
+            context = {
+                'title': self.title,
+                'detail_view_name': self.detail_view_name,
+                'object': obj,
+                'fields': fields,
+
+            }
             return aiohttp_jinja2.render_template(
                 request=self.request,
                 context=context,

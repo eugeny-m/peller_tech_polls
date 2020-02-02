@@ -3,20 +3,52 @@
 {% set title = title %}
 
 {% block content %}
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Title</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for p in records %}
-    <tr>
-      <th scope="row">{{ p.id }}</th>
-      <td><a href="{{ url('poll', poll_id=p.id) }}">{{ p.title }}</a></td>
-    </tr>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{{ url(detail_view_name, id=object.id) }}" method="post">
+
+  {% for field in fields %}
+    {% if field.type == 'VARCHAR' %}
+    <div class="form-group">
+      <label for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
+      <input type="text" class="form-control" id="id_{{ field.name }}" placeholder="Enter value" value="{{ field.value }}">
+    </div>
+
+    {% elif field.type == 'INTEGER' %}
+    <div class="form-group">
+      <label for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
+      <input type="number" class="form-control" id="id_{{ field.name }}" placeholder="Enter value" value="{{ field.value }}">
+    </div>
+
+    {% elif field.type == 'BOOLEAN' %}
+    <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="id_{{ field.name }}" value="{{ field.value }}">
+      <label class="form-check-label" for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
+    </div>
+
+    {% elif field.type == 'SELECT' %}
+    <div class="form-group">
+      <label for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
+
+      <select class="form-control" id="id_{{ field.name }}" required>
+        {% for parent in field["parents"]%}
+        <option value="{{ parent.id }}" {% if parent.selected %}selected{% endif %}>{{ parent.value }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {% else %}
+    <div class="form-group">
+      <label for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
+      <input type="text" class="form-control" id="id_{{ field.name }}" placeholder="Enter value" value="{{ field.value }}">
+    </div>
+
+    {% endif %}
+
   {% endfor %}
-  </tbody>
-</table>
+  <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>
+
 {% endblock %}
