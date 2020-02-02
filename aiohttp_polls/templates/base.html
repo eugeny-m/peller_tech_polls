@@ -15,6 +15,7 @@
         <div class="navbar-nav">
             <a class="nav-item nav-link {% if not registration %}active{% endif %}" href="{{ url('index') }}">Polls List</a>
             <a class="nav-item nav-link {% if registration %}active{% endif %}" href="{{ url('registration_page') }}">Registration</a>
+            <a class="nav-item nav-link " href="{{ url('logout') }}">Logout</a>
         </div>
       <!--</div>-->
     </nav>
