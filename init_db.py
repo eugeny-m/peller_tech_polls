@@ -130,7 +130,7 @@ def sample_data(engine=test_engine):
 
 if __name__ == '__main__':
 
-    setup_db(USER_CONFIG['postgres'])
+    # setup_db(USER_CONFIG['postgres'])
     create_tables(engine=user_engine)
     sample_data(engine=user_engine)
     # drop_tables(engine=user_engine)
