@@ -1,0 +1,27 @@
+{% extends "admin/admin_base.html" %}
+
+{% set title = title %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+      {% for column in columns %}
+      <th scope="col">{{ column|capitalize }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+  {% for obj in records %}
+    <tr>
+    {% for value in obj %}
+      <td scope="row">{{ value }}</td>
+      {#<td><a href="{{ url('poll', poll_id=p.id) }}">{{ p.title }}</a></td>#}
+    {% endfor %}
+      <td><button class="button">edit</button></td>
+    </tr>
+
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

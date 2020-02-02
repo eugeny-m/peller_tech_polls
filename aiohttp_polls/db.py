@@ -115,4 +115,7 @@ async def get_poll_questions(conn, poll_id):
     return return_dict
 
 
-
+async def get_list(conn, model):
+    result = await conn.execute(model.select().order_by(model.c.id.asc()))
+    records = await result.fetchall()
+    return records

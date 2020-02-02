@@ -1,0 +1,22 @@
+{% extends "admin/admin_base.html" %}
+
+{% set title = title %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Title</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for p in records %}
+    <tr>
+      <th scope="row">{{ p.id }}</th>
+      <td><a href="{{ url('poll', poll_id=p.id) }}">{{ p.title }}</a></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
