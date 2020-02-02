@@ -9,18 +9,21 @@
         <link rel="stylesheet" href="{{ url('static', filename='bootstrap.min.css') }}" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
   <body>
-    <div class="container-fluid">
 
-    <nav class="nav">
-      <a class="nav-link active" href="{{ url('index') }}">Polls List</a>
-      <a class="nav-link" href="{{ url('registration_page') }}">Registration</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <!--<div class="collapse navbar-collapse" id="navbarNavAltMarkup">-->
+        <div class="navbar-nav">
+            <a class="nav-item nav-link {% if not registration %}active{% endif %}" href="{{ url('index') }}">Polls List</a>
+            <a class="nav-item nav-link {% if registration %}active{% endif %}" href="{{ url('registration_page') }}">Registration</a>
+        </div>
+      <!--</div>-->
     </nav>
 
     <div class="container-fluid">
       {% block content %}
       {% endblock %}
     </div>
-    </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src=" {{ url('static', filename='js/jquery-3.3.1.slim.min.js') }}"></script>
