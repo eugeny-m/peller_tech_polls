@@ -24,11 +24,15 @@ These instructions will get you a copy of the project up and running on your loc
 `pip install -U pip`  
 `pip install -r requirements.txt`
 * create config file with postgres credentials, example in `config/polls.yaml`
+* create database in postgres manually with name from config file (database)  
+`CREATE DATABASE <database> ENCODING 'UTF8'`  
+or uncomment 133 line `# setup_db(USER_CONFIG['postgres'])` in init_db.py  
+if you have default postgres setup
+* init db  
+`python init_db.py --config '/path/to/config/file.yaml'`
 
 ## Running
 
-* init db  
-`python init_db.py --config '/path/to/config/file.yaml'`
 * run app  
 `python main.py --config '/path/to/config/file.yaml'`
 * check in your webbrowser  
