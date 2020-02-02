@@ -1,5 +1,6 @@
 import aiohttp_jinja2
 from aiohttp import web
+from aiohttp_security import authorized_userid
 
 from . import db
 
@@ -21,6 +22,10 @@ class BaseListCreateView(web.View):
 
     # list/detail view
     async def get(self):
+        username = await authorized_userid(self.request)
+        if not username:
+            return web.HTTPFound('/login')
+
         if 'add' in self.request.query:
             return await self.detail(obj_id=None)
 
@@ -33,6 +38,10 @@ class BaseListCreateView(web.View):
 
     # create/edit view
     async def post(self):
+        username = await authorized_userid(self.request)
+        if not username:
+            return web.HTTPFound('/login')
+
         obj_id = self.request.match_info.get('id', None)
         if obj_id is not None:
             return await self.edit(int(obj_id))

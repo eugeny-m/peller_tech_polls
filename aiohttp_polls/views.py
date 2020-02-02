@@ -1,12 +1,21 @@
 # views.py
 import aiohttp_jinja2
+
 from aiohttp import web
+from aiohttp_security import (
+    remember, forget, authorized_userid,
+    check_permission, check_authorized,
+)
 
 from . import db
+from .authz import check_credentials
 
 
 @aiohttp_jinja2.template('index.html')
 async def index(request):
+    username = await authorized_userid(request)
+    if not username:
+        return web.HTTPFound('/login')
     async with request.app['db'].acquire() as conn:
         cursor = await conn.execute(db.poll.select())
         polls = await cursor.fetchall()
@@ -60,7 +69,11 @@ async def vote(request):
 @aiohttp_jinja2.template('registration.html')
 async def registration_page(request):
     async with request.app['db'].acquire() as conn:
-        return {'registration': True}
+        content = {'registration': True}
+        username = await authorized_userid(request)
+        if username:
+            content['success'] = True
+        return content
 
 
 @aiohttp_jinja2.template('registration.html')
@@ -84,3 +97,36 @@ async def registration(request):
 
         context['success'] = True
         return context
+
+
+# authorization views
+
+class LoginView(web.View):
+    @aiohttp_jinja2.template('login.html')
+    async def get(self):
+        return {}
+
+    @aiohttp_jinja2.template('login.html')
+    async def post(self):
+        async with self.request.app['db'].acquire() as conn:
+            response = web.HTTPFound('/')
+            form = await self.request.post()
+            username = form.get('username')
+
+            verified = await check_credentials(conn, username)
+            if verified:
+                await remember(self.request, response, username)
+                return response
+
+            return web.HTTPUnauthorized(
+                body='Invalid username')
+
+
+async def logout(request):
+    await check_authorized(request)
+    response = web.Response(
+        text='You have been logged out',
+        content_type='text/html',
+    )
+    await forget(request, response)
+    return response

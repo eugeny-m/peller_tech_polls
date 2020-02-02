@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% set title = "Login" %}
+
+{% block content %}
+    <h4>Please login to get the access to polls</h4>
+    <form action=" {{ url('login') }}" method="post">
+    <div class="form-group">
+      <label for="id_username">Your username</label>
+      <input type="text" class="form-control" id="id_username" name="username" required placeholder="Enter username">
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+
+    </form>
+    <!--<a href="/logout">Logout</a>-->
+{% endblock %}
+
