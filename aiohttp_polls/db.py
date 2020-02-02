@@ -60,7 +60,7 @@ user = Table(
     meta,
 
     Column('id', Integer, primary_key=True),
-    Column('nickname', String(200), nullable=False, unique=True),
+    Column('username', String(200), nullable=False, unique=True),
     Column('gender', String(1), nullable=True),  # m/f/None
     Column('age', Integer, nullable=True),
 )

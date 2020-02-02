@@ -13,16 +13,16 @@
 {% if not success %}
 <p>Please, fill registration form.</p>
 <form action="{{ url('registration') }}" method="post">
-    <!--nickname-->
+    <!--username-->
     <div class="form-group">
-      <label for="id_nickname">Your nickname</label>
-      <input type="text" class="form-control" id="id_nickname" name="nickname" required placeholder="Enter nickname">
+      <label for="id_username">Your username</label>
+      <input type="text" class="form-control" id="id_username" name="username" required placeholder="Enter username">
     </div>
 
     <!--age-->
     <div class="form-group">
       <label for="id_age">Your age</label>
-      <input type="number" min="0" class="form-control" id="id_age" name="age" required placeholder="Enter nickname">
+      <input type="number" min="0" class="form-control" id="id_age" name="age" required placeholder="Enter username">
     </div>
 
     <!--gender-->
