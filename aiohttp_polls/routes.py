@@ -1,7 +1,7 @@
 # routes.py
 import pathlib
 
-from .views import index, poll, vote
+from .views import index, poll, vote, registration_page, registration
 from . admin import (
     admin_index,
     ChoiceAdmin,
@@ -24,6 +24,8 @@ def setup_routes(app):
     app.router.add_view('/admin/question/{id}', QuestionAdmin, name=QuestionAdmin.detail_view_name)
     app.router.add_view('/admin/choice', ChoiceAdmin, name=ChoiceAdmin.list_view_name)
     app.router.add_view('/admin/choice/{id}', ChoiceAdmin, name=ChoiceAdmin.detail_view_name)
+    app.router.add_get('/registration', registration_page, name='registration_page')
+    app.router.add_post('/registration', registration, name='registration')
     setup_static_routes(app)
 
 

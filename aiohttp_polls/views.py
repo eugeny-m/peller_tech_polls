@@ -53,3 +53,17 @@ async def vote(request):
                 elif str(ch['id']) == answer and not ch['correct']:
                     ch['wrong'] = True
         return poll_data
+
+
+# user registration
+
+@aiohttp_jinja2.template('registration.html')
+async def registration_page(request):
+    async with request.app['db'].acquire() as conn:
+        return {}
+
+
+@aiohttp_jinja2.template('registration.html')
+async def registration(request):
+    async with request.app['db'].acquire() as conn:
+        return {}
