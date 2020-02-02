@@ -21,11 +21,13 @@
       {#<td><a href="{{ url('poll', poll_id=p.id) }}">{{ p.title }}</a></td>#}
       {% endfor %}
       {% if record.id %}
-      <td><a href="{{ url(detail_view_name, id=record.id) }}"><button class="button">edit</button></a></td>
+      <td><a href="{{ url(detail_view_name, id=record.id) }}"><button class="btn btn-primary">edit</button></a></td>
       {% endif %}
     </tr>
 
   {% endfor %}
   </tbody>
 </table>
+<a href="{{ url(list_view_name) }}?add=1"><button class="btn btn-primary">Create</button></a>
+
 {% endblock %}

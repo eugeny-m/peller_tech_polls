@@ -6,24 +6,28 @@
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
+{% if object %}
 <form action="{{ url(detail_view_name, id=object.id) }}" method="post">
+{% else %}
+<form action="{{ url(list_view_name) }}" method="post">
+{% endif %}
 
   {% for field in fields %}
     {% if field.type == 'VARCHAR' %}
     <div class="form-group">
       <label for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
-      <input type="text" class="form-control" id="id_{{ field.name }}" placeholder="Enter value" value="{{ field.value }}">
+      <input type="text" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" required placeholder="Enter value" value="{{ field.value }}">
     </div>
 
     {% elif field.type == 'INTEGER' %}
     <div class="form-group">
       <label for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
-      <input type="number" class="form-control" id="id_{{ field.name }}" placeholder="Enter value" value="{{ field.value }}">
+      <input type="number" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" placeholder="Enter value" value="{{ field.value }}">
     </div>
 
     {% elif field.type == 'BOOLEAN' %}
     <div class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="id_{{ field.name }}" value="{{ field.value }}">
+      <input type="checkbox" class="form-check-input" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value }}">
       <label class="form-check-label" for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
     </div>
 
@@ -31,7 +35,7 @@
     <div class="form-group">
       <label for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
 
-      <select class="form-control" id="id_{{ field.name }}" required>
+      <select class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" required>
         {% for parent in field["parents"]%}
         <option value="{{ parent.id }}" {% if parent.selected %}selected{% endif %}>{{ parent.value }}</option>
         {% endfor %}
@@ -41,7 +45,7 @@
     {% else %}
     <div class="form-group">
       <label for="id_{{ field.name }}">{{ field.name|capitalize }}</label>
-      <input type="text" class="form-control" id="id_{{ field.name }}" placeholder="Enter value" value="{{ field.value }}">
+      <input type="text" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" placeholder="Enter value" value="{{ field.value }}">
     </div>
 
     {% endif %}

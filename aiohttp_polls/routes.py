@@ -4,9 +4,9 @@ import pathlib
 from .views import index, poll, vote
 from . admin import (
     admin_index,
-    ChoiceListCreateView,
-    PollListCreateView,
-    QuestionListCreateView,
+    ChoiceAdmin,
+    PollAdmin,
+    QuestionAdmin,
 )
 
 
@@ -18,18 +18,12 @@ def setup_routes(app):
     app.router.add_get('/poll/{poll_id}', poll, name='poll')
     app.router.add_post('/poll/{poll_id}/vote', vote, name='vote')
     app.router.add_get('/admin', admin_index, name='admin')
-    app.router.add_view('/admin/poll', PollListCreateView,
-                        name=PollListCreateView.list_view_name)
-    app.router.add_view('/admin/poll/{id}', PollListCreateView,
-                        name=PollListCreateView.detail_view_name)
-    app.router.add_view('/admin/question', QuestionListCreateView,
-                        name=QuestionListCreateView.list_view_name)
-    app.router.add_view('/admin/question/{id}', QuestionListCreateView,
-                        name=QuestionListCreateView.detail_view_name)
-    app.router.add_view('/admin/choice', ChoiceListCreateView,
-                        name=ChoiceListCreateView.list_view_name)
-    app.router.add_view('/admin/choice/{id}', ChoiceListCreateView,
-                        name=ChoiceListCreateView.detail_view_name)
+    app.router.add_view('/admin/poll', PollAdmin, name=PollAdmin.list_view_name)
+    app.router.add_view('/admin/poll/{id}', PollAdmin, name=PollAdmin.detail_view_name)
+    app.router.add_view('/admin/question', QuestionAdmin, name=QuestionAdmin.list_view_name)
+    app.router.add_view('/admin/question/{id}', QuestionAdmin, name=QuestionAdmin.detail_view_name)
+    app.router.add_view('/admin/choice', ChoiceAdmin, name=ChoiceAdmin.list_view_name)
+    app.router.add_view('/admin/choice/{id}', ChoiceAdmin, name=ChoiceAdmin.detail_view_name)
     setup_static_routes(app)
 
 

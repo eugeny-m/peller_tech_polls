@@ -17,6 +17,31 @@ class BaseListCreateView(web.View):
     list_view_name = None
     detail_view_name = None
 
+    # view control methods
+
+    # list/detail view
+    async def get(self):
+        if 'add' in self.request.query:
+            return await self.detail(obj_id=None)
+
+        obj_id = self.request.match_info.get('id', None)
+        if obj_id is not None:
+            return await self.detail(int(obj_id))
+
+        else:
+            return await self.list()
+
+    # create/edit view
+    async def post(self):
+        obj_id = self.request.match_info.get('id', None)
+        if obj_id is not None:
+            return await self.edit(int(obj_id))
+
+        else:
+            return await self.create()
+
+    # help methods
+
     def get_column_names(self):
         columns = []
 
@@ -28,24 +53,32 @@ class BaseListCreateView(web.View):
         columns = sorted(columns)
         return columns
 
-    # list/detail view
-    async def get(self):
-        obj_id = self.request.match_info.get('id', None)
-        if obj_id is not None:
-            return await self.detail(int(obj_id))
+    def get_context(self):
+        return {
+            'detail_template_name': self.detail_template_name,
+            'list_template_name': self.list_view_name,
+            'list_view_name': self.list_view_name,
+            'detail_view_name': self.detail_view_name,
+            'title': self.title,
+        }
 
-        else:
+    # POST methods
+
+    # create view
+    async def create(self):
+        data = await self.request.post()
+        async with self.request.app['db'].acquire() as conn:
+            await db.create_object(conn, self.model, data)
             return await self.list()
 
-    # create/edit view
-    async def post(self):
+    # edit view
+    async def edit(self, obj_id):
+        data = await self.request.post()
         async with self.request.app['db'].acquire() as conn:
-            context = await db.get_list(conn, self.model)
-            return aiohttp_jinja2.render_template(
-                request=self.request,
-                context=context,
-                template_name=self.detail_template_name
-            )
+            await db.update_object(conn, self.model, obj_id, data)
+            return await self.list()
+
+    # GET methods
 
     # list view
     async def list(self):
@@ -53,21 +86,19 @@ class BaseListCreateView(web.View):
         async with self.request.app['db'].acquire() as conn:
             records = await db.get_list(conn, self.model)
 
-            # get list of records values tuples
-            # with ordering as columns
+            # get list of records {'values': [..], 'id': 1}
+            # with values ordered as columns
             formatted_records = []
             for record in records:
                 formatted_records.append({
                     'values': [getattr(record, c) for c in columns],
                     'id': getattr(record, 'id', None),
                 })
-
-            context = {
+            context = self.get_context()
+            context.update({
                 'records': formatted_records,
-                'title': self.title,
                 'columns': columns,
-                'detail_view_name': self.detail_view_name,
-            }
+            })
             return aiohttp_jinja2.render_template(
                 request=self.request,
                 context=context,
@@ -75,18 +106,25 @@ class BaseListCreateView(web.View):
             )
 
     # detail view
-    async def detail(self, obj_id):
+    async def detail(self, obj_id=None):
         """
-        this method generate html form with all object fields except ID field
-        :param obj_id:
-        :return:
+        this method generate html form with all object
+        fields except ID field.
+        If obj_id is not None all inputs will be
+        filled from object
+
+        :param obj_id: int or None
+        :return: List View
         """
 
         async with self.request.app['db'].acquire() as conn:
-            obj = await db.get_object(conn, self.model, obj_id)
+            if obj_id is None:
+                obj = None
+            else:
+                obj = await db.get_object(conn, self.model, obj_id)
+
             fields = []
             foreign_keys = {f.parent.name: f for f in self.model.foreign_keys}
-            print(foreign_keys)
 
             for column in self.model.columns:
 
@@ -113,27 +151,28 @@ class BaseListCreateView(web.View):
                     # generate parents list for select options
                     for parent in parent_records:
                         # to chose selected foreign key value
-                        selected = getattr(obj, column.name) == parent.id
+                        selected = False
+                        if obj:
+                            selected = getattr(obj, column.name) == parent.id
                         parents.append({
                             'id': parent.id,
                             'value': repr(dict(parent)),
                             'selected': selected
                         })
 
-                fields.append({
+                field = {
                     'name': column.name,
-                    'value': getattr(obj, column.name),
                     'type': field_type,
                     'parents': parents,
-                })
+                }
+                if obj:
+                    field['value'] = getattr(obj, column.name)
+                fields.append(field)
 
-            context = {
-                'title': self.title,
-                'detail_view_name': self.detail_view_name,
-                'object': obj,
-                'fields': fields,
+            context = self.get_context()
+            context['object'] = obj
+            context['fields'] = fields
 
-            }
             return aiohttp_jinja2.render_template(
                 request=self.request,
                 context=context,
@@ -141,21 +180,21 @@ class BaseListCreateView(web.View):
             )
 
 
-class PollListCreateView(BaseListCreateView):
+class PollAdmin(BaseListCreateView):
     model = db.poll
     title = 'Poll'
     list_view_name = 'admin_poll_list'
     detail_view_name = 'admin_poll'
 
 
-class QuestionListCreateView(BaseListCreateView):
+class QuestionAdmin(BaseListCreateView):
     model = db.question
     title = 'Question'
     list_view_name = 'admin_question_list'
     detail_view_name = 'admin_question'
 
 
-class ChoiceListCreateView(BaseListCreateView):
+class ChoiceAdmin(BaseListCreateView):
     model = db.choice
     title = 'Choice'
     list_view_name = 'admin_choice_list'
