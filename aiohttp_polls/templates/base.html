@@ -6,13 +6,25 @@
               href="{{ url('static', filename='style.css') }}" />
         <title>{{title}}</title>
     {% endblock %}
+        <link rel="stylesheet" href="{{ url('static', filename='bootstrap.min.css') }}" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   </head>
   <body>
-    <h1>{{ title }}</h1>
-    <div id="content_block">
+    <div class="container-fluid">
+
+    <nav class="nav">
+      <a class="nav-link active" href="{{ url('index') }}">Polls List</a>
+      <a class="nav-link" href="#">Registration</a>
+    </nav>
+
+    <div class="container-fluid">
       {% block content %}
       {% endblock %}
     </div>
-    <a href="{{ url('index') }}">Go to main page</a>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src=" {{ url('static', filename='js/jquery-3.3.1.slim.min.js') }}"></script>
+    <script src=" {{ url('static', filename='js/popper.min.js') }}"></script>
+    <script src=" {{ url('static', filename='js/bootstrap.min.js') }}"></script>
   </body>
 </html>

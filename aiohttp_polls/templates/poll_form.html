@@ -7,19 +7,21 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <form action="{{ url('vote', poll_id=poll.id) }}" method="post">
+
 {% for question in questions %}
-    <p>{{ question.question.question_text }}</p>
-    <select name="{{ question.question.id }}" id="{{ question.question.id }}">
+    <div class="form-group">
+    <label for="question_{{ question.question.id }}">{{ question.question.question_text }}</label>
+    <select class="form-control" name="{{ question.question.id }}" id="question_{{ question.question.id }}">
     {% for choice in question.choices %}
         <option value="{{ choice.id }}">{{ choice.choice_text }}</option>
-        {#
-        <input type="radio" name="choice" id="choice_{{ choice.id }}" value="{{ choice.id }}" />
-        <label for="choice_{{ choice.id }}">{{ choice.choice_text }}</label><br />
-        #}
+    {% else %}
+        <option value="None">None</option>
     {% endfor %}
     </select>
+    </div>
 {% endfor %}
-<input type="submit" value="Vote" />
+
+<button type="submit" class="btn btn-dark">Vote</button>
 </form>
 
 {% endblock %}
